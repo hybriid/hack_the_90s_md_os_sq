@@ -23,6 +23,9 @@ ballydir=-3
 xboxes=15
 yboxes=5
 
+-- collision cooldown
+cooldown = 30 -- 1 second @ 30
+
 boxwidth=5
 boxheight=5
 
@@ -78,10 +81,13 @@ end
 function bouncepaddle()
 	if ballx>=padx and 
 	ballx<=padx+padw and
-	bally>pady then
+	bally>pady and cooldown < 0 then
 		ballydir=-ballydir
+		cooldown = 30
 		score+=10 -- increase the score on a hit!
 		sfx(0)
+	else
+		cooldown -= 1
 	end
 end
 

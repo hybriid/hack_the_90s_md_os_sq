@@ -4,10 +4,7 @@ ball_radius=3
 ball_x_dir=5
 ball_y_dir=-3
 
-function is_collide(
-    obj_x1, obj_y1,
-    obj_x2, obj_y2,
-)
+function is_collide(obj_x1, obj_y1, obj_x2, obj_y2)
 
     if ball_x + ball_radius > obj_x1 and
        ball_x + ball_radius < obj_x2 then
