@@ -20,8 +20,8 @@ ballxdir=5
 ballydir=-3
 
 -- boxes
-boxleft=10
-boxtop=20
+xboxes=15
+yboxes=5
 
 boxwidth=5
 boxheight=5
@@ -29,8 +29,9 @@ boxheight=5
 xspace=2
 yspace=2
 
-xboxes=10
-yboxes=5
+boxleft= (128 - xboxes*(boxwidth + xspace) + xspace) / 2
+
+boxtop=20
 
 mt = {}	-- create the matrix
 for i=1,xboxes do
