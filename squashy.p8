@@ -269,6 +269,12 @@ function resetPaddle()
 	xspace=2
 	yspace=2
 
+	ballx=64
+	bally=64
+	ballsize=2
+	ballxdir=2
+	ballydir=-3
+
 	boxleft= (128 - xboxes*(boxwidth + xspace) + xspace) / 2
 	boxtop=20
 
@@ -282,7 +288,7 @@ function resetPaddle()
 end
 
 function _update()
-	if not dotMMO then
+	if lives > 0 then
 		runPaddle()
 	end	
 end
@@ -299,8 +305,16 @@ function _draw()
 	-- if not dotMMO then
 		drawPaddle()
 	-- end
+	if lives == 0 then
+		rectfill(0,0,128,128,3)	
+		print("GAME OVER", 64, 64, 15)
+	end
 
-
+	--win
+	if score == xboxes * yboxes then
+		rectfill(0,0,128,128,3)
+		print("YOU WIN",64,64,15)
+	end
 end
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
