@@ -7,66 +7,48 @@ function handyfunc(x,y)
     return x + y
 end
 end
-function require(p)
-local l=package.loaded
-if (l[p]==nil) l[p]=package._c[p]()
-if (l[p]==nil) l[p]=true
-return l[p]
-end
--- add newline to end of required functions
-require("functions")
-
--- player
-lives=3
-score=0
-
--- paddle
-padx=52
-pady=122
-padw=24
-padh=4
-padspeed=4
-
--- ball
+package._c["ball_collisions"]=function()
 ballx=64
 bally=64
-ballsize=3
-ballxdir=5
+ballsize=2
+ballxdir=2
 ballydir=-3
 
--- boxes
-xboxes=15
-yboxes=5
+function hitLeft(obj_x1, obj_y1, obj_x2, obj_y2)
+	return ballx >= obj_x1 and ballx <= obj_x1 + 1 and
+	bally >= obj_y1 and bally <= obj_y2
+end
 
-boxwidth=5
-boxheight=5
+function hitRight(obj_x1, obj_y1, obj_x2, obj_y2)
+	return ballx >= obj_x2 + 1 and ballx <= obj_x2 and
+	bally >= obj_y1 and bally <= obj_y2
+end
 
-xspace=2
-yspace=2
+function hitTop(obj_x1, obj_y1, obj_x2, obj_y2)
+	return ballx >= obj_x1 + 1 and ballx <= obj_x2 - 1 and
+	bally >= obj_y1 and bally <= obj_y1 + 1
+end
 
-boxleft= (128 - xboxes*(boxwidth + xspace) + xspace) / 2
+function hitBot(obj_x1, obj_y1, obj_x2, obj_y2)
+	return ballx >= obj_x1 + 1 and ballx <= obj_x2 - 1 and
+	bally >= obj_y2 - 1 and bally <= obj_y2
+end
 
-boxtop=20
+function is_collide(obj_x1, obj_y1, obj_x2, obj_y2)
+	obj_x2 += 2
 
-mt = {}	-- create the matrix
-for i=1,xboxes do
-	mt[i] = {}	-- create a new row
-	for j=1,yboxes do	-- populate rows with boxes
-		mt[i][j] = 0
+   	if ballx >= obj_x1 and ballx <= obj_x2 and
+	  bally >= obj_y1 and bally <= obj_y2 then
+	  	if ballx <= obj_x1 + ballxdir then
+		  ballxdir = -ballxdir
+		  return true
+		elseif ballx >= obj_x2 - ballxdir then
+			ballxdir = -ballxdir
+			return true
+		end
+		return true
 	end
-end
-
-function movepaddle()
- if btn(0) then
- 	padx-=padspeed
- elseif btn(1) then
- 	padx+=padspeed
- end
-end
-
-function moveball()
-	ballx+=ballxdir
-	bally+=ballydir
+	return false
 end
 
 function bounceball()
@@ -91,14 +73,37 @@ end
 
 -- bounce the ball off the paddle
 function bouncepaddle()
-	if ballx>=padx and 
-	ballx<=padx+padw and
-	bally>pady then
+	-- if ballx>=padx and 
+	-- ballx<=padx+padw and
+	-- bally>pady then
+
+	if is_collide(padx,pady,padx+padw,pady+padh) then
 		ballydir=-ballydir
-		score+=10 -- increase the score on a hit!
+		-- score+=10 -- increase the score on a hit!
 		sfx(0)
 	end
 end
+
+-- bounce the ball off the boxes
+function bouncebox(x,y)
+	for i=1,x do
+		for j=1,y do
+			if mt[i][j] == 0 then
+				left=boxleft+(i-1)*(boxwidth+xspace)
+				top=boxtop+(j-1)*(boxheight+yspace)
+				right=left+boxwidth
+				bot=top+boxwidth
+				if is_collide(left,top,right,bot) then
+					ballydir=-ballydir
+					mt[i][j] = 1
+					score += 1
+					return;
+				end
+			end
+		end
+	end
+end
+
 
 function losedeadball()
 	if bally>128 then
@@ -108,15 +113,79 @@ function losedeadball()
 		lives-=1
 	end
 end
+end
+function require(p)
+local l=package.loaded
+if (l[p]==nil) l[p]=package._c[p]()
+if (l[p]==nil) l[p]=true
+return l[p]
+end
+-- add newline to end of required functions
+require("functions")
+require("ball_collisions")
+
+_set_fps(60)
+
+-- player
+lives=3
+score=0
+
+-- paddle
+padx=52
+pady=122
+padw=20
+padh=3
+padspeed=4
+
+-- ball
+-- ballx=64
+-- bally=64
+-- ballsize=3
+-- ballxdir=5
+-- ballydir=-3
+
+-- boxes
+xboxes=12
+yboxes=5
+
+boxwidth=6
+boxheight=6
+
+xspace=2
+yspace=2
+
+boxleft= (128 - xboxes*(boxwidth + xspace) + xspace) / 2
+boxtop=20
+
+mt = {}	-- create the matrix
+for i=1,xboxes do
+	mt[i] = {}	-- create a new row
+	for j=1,yboxes do	-- populate rows with boxes
+		mt[i][j] = 0
+	end
+end
+
+function movepaddle()
+ if btn(0) then
+ 	padx-=padspeed
+ elseif btn(1) then
+ 	padx+=padspeed
+ end
+end
+
+function moveball()
+	ballx+=ballxdir
+	bally+=ballydir
+end
 
 function drawbox(i,j)
 	-- defines the bounds of each box
-	topleft=boxleft+(i-1)*(boxwidth+xspace)
-	botleft=boxtop+(j-1)*(boxheight+yspace)
-	topright=topleft+boxwidth
-	botright=botleft+boxwidth
+	left=boxleft+(i-1)*(boxwidth+xspace)
+	top=boxtop+(j-1)*(boxheight+yspace)
+	right=left+boxwidth
+	bot=top+boxwidth
 	
-	rectfill(topleft,botleft,topright,botright,15)
+	rectfill(left,top,right,bot,15)
 end
 
 function drawboxes()
@@ -133,6 +202,7 @@ function _update()
 	movepaddle()
 	bounceball()
 	bouncepaddle()
+	bouncebox(xboxes,yboxes)
 	moveball()
 	losedeadball()
 end

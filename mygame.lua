@@ -1,5 +1,8 @@
 -- add newline to end of required functions
 require("functions")
+require("ball_collisions")
+
+_set_fps(60)
 
 -- player
 lives=3
@@ -8,29 +11,28 @@ score=0
 -- paddle
 padx=52
 pady=122
-padw=24
-padh=4
+padw=20
+padh=3
 padspeed=4
 
 -- ball
-ballx=64
-bally=64
-ballsize=3
-ballxdir=5
-ballydir=-3
+-- ballx=64
+-- bally=64
+-- ballsize=3
+-- ballxdir=5
+-- ballydir=-3
 
 -- boxes
-xboxes=15
+xboxes=12
 yboxes=5
 
-boxwidth=5
-boxheight=5
+boxwidth=6
+boxheight=6
 
 xspace=2
 yspace=2
 
 boxleft= (128 - xboxes*(boxwidth + xspace) + xspace) / 2
-
 boxtop=20
 
 mt = {}	-- create the matrix
@@ -54,54 +56,14 @@ function moveball()
 	bally+=ballydir
 end
 
-function bounceball()
-	-- left
-	if ballx<ballsize then
-		ballxdir=-ballxdir
-		sfx(0)
-	end
-
-	-- right
-	if ballx>128-ballsize then
-		ballxdir=-ballxdir
-		sfx(0)
-	end
-
-	-- top
-	if bally<ballsize then
-		ballydir=-ballydir
-		sfx(0)
-	end
-end
-
--- bounce the ball off the paddle
-function bouncepaddle()
-	if ballx>=padx and 
-	ballx<=padx+padw and
-	bally>pady then
-		ballydir=-ballydir
-		score+=10 -- increase the score on a hit!
-		sfx(0)
-	end
-end
-
-function losedeadball()
-	if bally>128 then
-		sfx(3)
-		bally=24
-		score=0
-		lives-=1
-	end
-end
-
 function drawbox(i,j)
 	-- defines the bounds of each box
-	topleft=boxleft+(i-1)*(boxwidth+xspace)
-	botleft=boxtop+(j-1)*(boxheight+yspace)
-	topright=topleft+boxwidth
-	botright=botleft+boxwidth
+	left=boxleft+(i-1)*(boxwidth+xspace)
+	top=boxtop+(j-1)*(boxheight+yspace)
+	right=left+boxwidth
+	bot=top+boxwidth
 	
-	rectfill(topleft,botleft,topright,botright,15)
+	rectfill(left,top,right,bot,15)
 end
 
 function drawboxes()
@@ -118,6 +80,7 @@ function _update()
 	movepaddle()
 	bounceball()
 	bouncepaddle()
+	bouncebox(xboxes,yboxes)
 	moveball()
 	losedeadball()
 end
