@@ -99,7 +99,6 @@ function losedeadball()
 	if bally>128 then
 		sfx(3)
 		bally=24
-		score=0
 		lives-=1
 	end
 end
