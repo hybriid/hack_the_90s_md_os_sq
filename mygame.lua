@@ -37,6 +37,12 @@ function resetPaddle()
 	xspace=2
 	yspace=2
 
+	ballx=64
+	bally=64
+	ballsize=2
+	ballxdir=2
+	ballydir=-3
+
 	boxleft= (128 - xboxes*(boxwidth + xspace) + xspace) / 2
 	boxtop=20
 
