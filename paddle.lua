@@ -9,6 +9,8 @@ pady=122
 padw=20
 padh=3
 padspeed=4
+padcolour=15
+
 
 -- ball
 -- ballx=64
@@ -52,7 +54,7 @@ end
 		pady +=padspeed
 	end
 	if pady <= 0 then
-		dotMMO = true
+        dotMMO = true
 	end
 end
 
@@ -102,7 +104,10 @@ function drawPaddle()
     drawboxes()
     
     -- draw the paddle
-    rectfill(padx,pady,padx+padw,pady+padh,15)
+    if padw > 99 then
+        padcolour += 1
+    end
+    rectfill(padx,pady,padx+padw,pady+padh,padcolour)
 
     -- draw the ball
     circfill(ballx,bally,ballsize,15)

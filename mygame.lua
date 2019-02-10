@@ -19,6 +19,7 @@ function resetPaddle()
 	padw=100
 	padh=20
 	padspeed=4
+	padcolour=15
 
 	-- ball
 	-- ballx=64
