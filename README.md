@@ -4,11 +4,7 @@ Squashy is a Break-out clone developed in the PICO-8 virtual console
 
 ## Dependencies
 
-In order to make use of custom modules, the project uses 
-
-[picotool]: https://github.com/dansanderson/picotool
-
- to build the cartridge
+In order to make use of custom modules, the project uses `picotool` to build the cartridge
 
 ## Installation
 
